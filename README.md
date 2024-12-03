@@ -34,7 +34,55 @@ Submodules:
 Terraform allows you to create reusable modules for specific infrastructure components.
 Submodules can be organized into their own directories, each containing its own main.tf, variables.tf, outputs.tf, and providers.tf files.
 Modules can be referenced in the root module or other submodules, promoting code reusability.
+
+
 Example Structure:
+Terraform Configuration Files
+
+Terraform uses a declarative language called HashiCorp Configuration Language (HCL) to define your infrastructure. The core configuration files are typically named main.tf.
+
+Here's a breakdown of the common files and their purposes:
+
+Core Configuration Files
+main.tf:
+The primary file where you define the resources and providers.
+Contains the core logic of your infrastructure.
+Supporting Files
+variables.tf:
+Defines variables to make your configurations more flexible and reusable.
+Can be used to customize configurations for different environments.
+outputs.tf:
+Defines outputs to export values from your infrastructure, such as IP addresses or resource IDs.
+Useful for referencing values in other scripts or tools.
+providers.tf:
+Specifies the providers for different cloud platforms or services.
+This file is often used to configure authentication and other provider-specific settings.
+versions.tf:
+Defines the required versions of Terraform and providers.
+Ensures consistent behavior and compatibility.
+Modularization:
+Modules:
+Terraform supports modularization, allowing you to break down complex infrastructure into reusable components.
+Each module has its own set of configuration files, including main.tf, variables.tf, outputs.tf, and providers.tf.
+Example Structure:
+
+my_infrastructure/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── providers.tf
+├── versions.tf
+├── modules/
+│   ├── vpc/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── outputs.tf
+│   │   └── providers.tf
+│   └── ec2/
+│       ├── main.tf
+│       ├── variables.tf
+│       ├── outputs.tf
+│       └── providers.tf
 
 my_infrastructure/
 ├── main.tf

@@ -1,0 +1,41 @@
+resource "google_compute_firewall" "ssh_rule" {
+  name    = "allow-ssh"
+  network = "default"
+  source_ranges = ["0.0.0.0/0"]  # Replace with specific IP ranges
+  allowed = [
+    {
+      IPProtocol = "tcp"
+      ports       = ["22"]
+    }
+  ]
+}
+#Custom metadata:
+metadata = {
+  startup-script = <<EOF
+    #!/bin/bash
+    # Your custom script here
+    EOF
+}
+#Instance Teamplate 
+resource "google_compute_instance_template" "my_template" {
+  # ... instance template configuration
+}
+
+resource "google_compute_instance" "my_instance" {
+  name         = "my-instance"
+  machine_type = "e2-medium"
+  instance_template = google_compute_instance_template.my_template.self_link
+}
+#Autoscalng
+resource "google_compute_autoscaler" "my_autoscaler" {
+  name         = "my-autoscaler"
+  target        = google_compute_instance_group_manager.my_igm.self_link
+  autoscaling_policy {
+    min_num_replicas = 1
+    max_num_replicas = 5
+    cool_down_period_sec = 300
+    cpu_utilization {
+      target = 0.8
+    }
+  }
+}

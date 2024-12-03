@@ -1,7 +1,31 @@
-resource "google_storage_bucket" "my-bucket" {
-  name          = "tt-githubdemo-bucket"
-  location      = "US"
-  force_destroy = true
+terraform{
+ required_providers {
+  gcp = {
+  source = "hashicorp/gcp"
+   version = "~. 1.0.4"
 
-  public_access_prevention = "enforced"
+provider "google" {
+  credentials = ""
+  project = "{{YOUR GCP PROJECT}}"
+  region  = "us-central1"  # Optional, default region
+  zone    = "us-central1-c" # Optional, default zone
+
+resource "google_compute_instance" "my_instance" {
+  name         = "my-vm-instance"
+  machine_type = "e2-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+}
+ network_interface {
+    network   
+ = "default"
+    access_config   
+ {
+    }
+  }
+}
 }

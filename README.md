@@ -1,4 +1,4 @@
-TERRAFORM:Key Features of Terraform:
+TERRAFORM:Key Features of Terraform:-
 
 Declarative Configuration: You define the desired state of your infrastructure, and Terraform takes care of the steps to achieve it.
 Execution Plans: Before making changes, Terraform generates an execution plan, outlining the steps it will take, allowing you to review and approve the changes.

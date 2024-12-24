@@ -1,0 +1,129 @@
+#Interview Questions:
+
+1.How would you write a terraform script to create an ec2 instance and run a script on every reboot?
+  resource "aws_instance" "my-instance" {
+  ami = "ami-8e693686238e"
+  instance_type = "t2.micro"
+
+  user_data = <<-- EOF
+  #!/bin/bash
+  echo "running script on every reboot"
+  #your script command here
+  yum update -y
+  systemctl restart <your-service>
+  EOF 
+}
+
+2.for_each command in terrfaorm
+for_each: 
+locals block: defines a list of regions named region
+
+for_each argument:
+used with the aws_s3_bucket resource
+
+toset(local.region): converts the list of regions to a set,it ensures each region is processed one by one even if it appears multiple times
+
+each.value: represents the current value from the regions set during each iteration of the loop.
+
+bucket = "my-bucket-${each.value}":
+Constructs the bucket name dynamically by concatenating a prefix ("my-bucket-") with the current region.
+
+This example demonstartes how to create an s3 bukcte in each of the aws regions
+Data Types: The for_each argument expects a collection data type, such as a list, map, or set.
+Key-Value Pairs: If you're using a map for for_each, you can access both the key and value using each.key and each.value.
+Dependencies: If resources depend on each other within the for_each loop, you can use the depends_on meta-argument to establish dependencies between them.
+
+locals {
+  environments = {
+  dev = "us-east-1"
+  prod = "us-east-2"
+ }
+}
+resource "aws_s3_bucket" "my_bucket" {
+ for_each = local.environments
+
+ bucket = "my-bucket-${each.key}"
+ acl = "private"
+
+tags = {
+ Name = "My Bucket-${each.key}"
+ Environment = each.key
+ }
+}
+By using the for_each argument, you can efficiently create multiple resources with similar configurations, reducing code duplication and improving maintainability.
+The for_each construct in Terraform allows you to create multiple instances of the same resource by iterating over a collection. Here's how you can use for_each to create an AWS S3 bucket in multiple regions:
+
+locals {
+ regions = ["us-east-1", "us-west-1", "us-west-2"]
+ }
+resource "aws_s3_bucket " "my_bucket " {
+ for_each = toset(local.regions)
+
+bucket = "my_bucket-${each.key}
+acl = private
+
+tags = {
+ Name = "My_Bucket-${each.key}"
+ Environment = "prod"
+ }
+}
+
+locals block:
+
+Defines a local variable regions containing a list of AWS regions.
+for_each:
+
+This meta-argument is used with the aws_s3_bucket resource.
+toset(local.regions): Converts the list of regions into a set. This ensures that duplicate regions are not processed.
+each.key:
+
+Within the resource block, each.key represents the current key of the set during iteration. In this case, it will be the region name (e.g., "us-east-1", "us-west-2", "eu-west-1").
+Resource Configuration:
+
+bucket: The name of the S3 bucket. It's dynamically generated using the region name.
+acl: Sets the access control list for the bucket to "private".
+tags: Assigns tags to the bucket for organization and identification.
+Key Points:
+
+for_each simplifies the creation of multiple instances of the same resource by iterating over a collection.
+each.key provides access to the current element's key during iteration.
+You can use for_each with various data structures, such as lists, maps, and sets.
+==============================================
+
+3.Count argument:
+
+
+Defines an output variable named bucket_count.
+length(aws_s3_bucket.my_bucket): This is where the length function is used. It calculates the number of elements in the aws_s3_bucket.my_bucket collection. Since for_each creates one bucket for each region, the length of this collection will be equal to the number of buckets created.
+Output:
+
+When you apply this Terraform configuration, the bucket_count output will display the number of S3 buckets created, which in this case will be 3.
+
+Key Points:
+
+The length function is used to determine the size of a collection, such as a list, set, or map.
+It can be used to count the number of resources created by for_each or to count the number of elements in any other collection.
+This example demonstrates a basic usage of the length function in Terraform. You can use it in various scenarios to count resources, determine the size of collections, and make decisions based on the number of elements.
+
+Terraform
+
+locals {
+  regions = ["us-east-1", "us-west-2", "eu-west-1"]
+}
+
+resource "aws_s3_bucket" "my_bucket" {
+  for_each = toset(local.regions)
+
+  bucket = "my-bucket-${each.value}"
+  acl    = "private"
+
+  tags = {
+    Name = "My Bucket-${each.value}"
+    Environment = "prod"
+  }
+}
+
+output "bucket_count" {
+  value = length(aws_s3_bucket.my_bucket)
+}
+
